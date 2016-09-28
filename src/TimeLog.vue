@@ -1,7 +1,7 @@
 <template>
   <div>
     <h4>{{title}} <small><a :href='editLink' target='_blank' class='right'>edit</a></small></h4>
-    <form>
+    <form novalidate @submit.prevent='logIt'>
       <div>
         <label>Start <a href='#' @click.prevent='setNow("start")'>set to now</a></label>
         <input id='start' type='datetime-local' v-model='start'>
@@ -14,10 +14,11 @@
         <label for='start'>What?</label>
         <input id='what' type='text' v-model='what'>
       </div>
+
+      <div class='row' v-if='saveState !== "saving"'>
+        <input type='submit' class='waves-effect waves-light btn col s12' value='Log time'/>
+      </div>
     </form>
-    <div class='row' v-if='saveState !== "saving"'>
-      <a class='waves-effect waves-light btn col s12' @click='logIt'>Log time</a>
-    </div>
 
     <div  v-if='saveState === "saving"'>
       <h4>Saving...</h4>
