@@ -38,7 +38,7 @@
           <th data-field='end'>End</th>
           <th data-field='what'>
             What?
-            <a href='#' @click.prevent='refreshRecords' class='right'>&#x21bb; refresh... </a>
+            <a href='#' @click.prevent='refreshRecords' class='right' title='refresh'>&#x21bb;</a>
           </th>
         </tr>
       </thead>
