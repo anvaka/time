@@ -53,3 +53,16 @@ function listFiles() {
     appModel.files = response.files;
   });
 }
+
+export function createFile(name) {
+  const fileMetadata = {
+    name,
+    mimeType: 'application/vnd.google-apps.spreadsheet'
+  };
+
+  return gapi.client.drive.files.create({
+    resource: fileMetadata,
+  }).execute(response => {
+    console.log(response);
+  });
+}

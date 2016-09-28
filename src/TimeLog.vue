@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4>{{title}} <small><a :href='editLink' target='_blank' class='right'>edit</a></small></h4>
+    <h4>{{title}} <small><a :href='editLink' target='_blank' title='edit in Google Sheets'><i class='material-icons'>mode_edit</i></a></small></h4>
     <form novalidate @submit.prevent='logIt'>
       <div>
         <label>Start <a href='#' @click.prevent='setNow("start")'>set to now</a></label>

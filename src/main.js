@@ -7,6 +7,7 @@ import VueRouter from 'vue-router';
 import App from './App';
 import ListFiles from './ListFiles';
 import TimeLog from './TimeLog';
+import CreateTimeLog from './CreateTimeLog';
 
 import googInit from './lib/googInit.js';
 
@@ -19,6 +20,9 @@ router.map({
   },
   '/time-log/:sheetId': {
     component: TimeLog
+  },
+  '/create-time-log': {
+    component: CreateTimeLog
   },
 });
 
