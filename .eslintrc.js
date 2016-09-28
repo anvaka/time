@@ -21,6 +21,7 @@ module.exports = {
     'no-multiple-empty-lines': 0,
     'object-curly-spacing': 0,
     'comma-dangle': 0,
+    'no-param-reassign': 0,
   },
   globals: {
     gapi: true

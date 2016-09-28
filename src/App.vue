@@ -7,11 +7,12 @@
       <router-view class="view" keep-alive></router-view>
     </div>
     <div v-if="needsAuth">
-      <h1>Welcome!</h1>
+      <h1>Welcome to Sheetime!</h1>
       <p>
-      To use this app you need to be signed in.
+        This is just a simple interface to Google Sheets, that allows you to
+        log your time. Log it here, and analyze from Google Sheets later
       </p>
-      <a class="waves-effect waves-light btn" @click='onSigninClick'>Sign in</a>
+      <a class="waves-effect waves-light btn" @click='onSigninClick'>Sign in to Google Sheets</a>
     </div>
 
   </div>

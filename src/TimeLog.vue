@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h4>{{title}}</h4>
+    <h4>{{title}} <small><a :href='editLink' target='_blank' class='right'>edit</a></small></h4>
     <form>
       <div>
-        <label for='start'>Start</label>
+        <label>Start <a href='#' @click.prevent='setNow("start")'>set to now</a></label>
         <input id='start' type='datetime-local' v-model='start'>
       </div>
       <div>
-        <label for='start'>End</label>
+        <label>End <a href='#' @click.prevent='setNow("end")'>set to now</a></label>
         <input id='end' type='datetime-local' v-model='end'>
       </div>
       <div class='input-field'>
@@ -35,7 +35,10 @@
         <tr>
           <th data-field='start'>Start</th>
           <th data-field='end'>End</th>
-          <th data-field='what'>What?</th>
+          <th data-field='what'>
+            What?
+            <a href='#' @click.prevent='refreshRecords' class='right'>&#x21bb; refresh... </a>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -61,17 +64,7 @@ import appModel from './lib/appModel.js';
 
 export default {
   created() {
-    this.spreadsheetId = this.$route.params.sheetId;
-    appModel.fetchLastRecords(this.spreadsheetId)
-      .then((response) => {
-        this.recordsState = 'loaded';
-        const lastRecords = response.result.values.reverse().slice(0, 100);
-        this.$set('lastRecords', lastRecords);
-        const lastDate = getLastDate(lastRecords);
-        if (lastDate) this.start = lastDate;
-      }, (response) => {
-        console.error('failed to load range', response);
-      });
+    loadRecords(this);
   },
 
   data() {
@@ -94,15 +87,29 @@ export default {
       }
 
       return '';
+    },
+
+    editLink() {
+      const sheetId = getSpreadsheetIdFromRoute(this);
+      return `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
     }
   },
 
   methods: {
+    refreshRecords() {
+      loadRecords(this);
+    },
+
+    setNow(what) {
+      this[what] = getNow();
+    },
+
     logIt() {
       this.saveState = 'saving';
       const start = parseDate(this.start);
       const end = parseDate(this.end);
-      appModel.logTime(this.spreadsheetId, start, end, this.what)
+      const spreadsheetId = getSpreadsheetIdFromRoute(this);
+      appModel.logTime(spreadsheetId, start, end, this.what)
         .then(() => {
           this.lastRecords.unshift([start, end, this.what]);
           this.start = this.end;
@@ -122,6 +129,25 @@ export default {
     },
   },
 };
+
+
+function loadRecords(component) {
+  component.recordsState = 'loading';
+  appModel.fetchLastRecords(getSpreadsheetIdFromRoute(component))
+    .then((response) => {
+      component.recordsState = 'loaded';
+      const lastRecords = response.result.values.reverse().slice(0, 100);
+      component.lastRecords = lastRecords;
+      const lastDate = getLastDate(lastRecords);
+      if (lastDate) component.start = lastDate;
+    }, (response) => {
+      console.error('failed to load range', response);
+    });
+}
+
+function getSpreadsheetIdFromRoute(component) {
+  return component.$route.params.sheetId;
+}
 
 function parseDate(str) {
   return parseDateObject(new Date(str));
