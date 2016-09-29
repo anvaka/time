@@ -20,7 +20,7 @@
 
 <script>
 import appModel from './lib/appModel.js';
-import {signin} from './lib/googInit.js';
+import {signin} from './lib/goog.js';
 
 export default {
   data() {

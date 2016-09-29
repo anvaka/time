@@ -9,7 +9,7 @@ import ListFiles from './ListFiles';
 import TimeLog from './TimeLog';
 import CreateTimeLog from './CreateTimeLog';
 
-import googInit from './lib/googInit.js';
+import {init} from './lib/goog.js';
 
 Vue.use(VueRouter);
 
@@ -28,4 +28,4 @@ router.map({
 
 router.start(App, '#app');
 
-googInit();
+init();

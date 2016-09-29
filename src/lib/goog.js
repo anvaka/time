@@ -1,7 +1,5 @@
 import appModel from './appModel.js';
 
-export default init;
-
 const CLIENT_ID = '616901175953-k3qnrg34f7khs5a688k8l51oqn4f15o1.apps.googleusercontent.com';
 const SCOPES = [
   'https://www.googleapis.com/auth/drive',
@@ -9,13 +7,14 @@ const SCOPES = [
   'https://www.googleapis.com/auth/spreadsheets.readonly',
   'https://www.googleapis.com/auth/drive.readonly'
 ];
+
 let initialized = false;
 
 export function signin(immediate) {
   gapi.auth.authorize({client_id: CLIENT_ID, scope: SCOPES, immediate}, handleAuthResult);
 }
 
-function init() {
+export function init() {
   if (!gapi.auth) {
     window.initGapi = init;
     return;

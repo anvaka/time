@@ -14,7 +14,7 @@
 
 <script>
 import appModel from './lib/appModel.js';
-import {createFile} from './lib/googInit.js';
+import {createFile} from './lib/goog.js';
 
 export default {
   data() {
