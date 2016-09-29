@@ -30,6 +30,9 @@
     <div v-if='saveState === "error"' class='card-panel red-text'>
       <h4>Error...</h4>
       <pre><code>{{error}}</code></pre>
+      <div>
+        Refresh the page maybe?
+      </div>
     </div>
     <table v-if='recordsState === "loaded"'>
       <thead>
@@ -62,6 +65,7 @@
 
 <script>
 import appModel from './lib/appModel.js';
+import {getError} from './lib/goog.js';
 
 export default {
   created() {
@@ -118,14 +122,9 @@ export default {
           this.what = '';
           this.saveState = 'done';
           this.error = '';
-        }, (response) => {
+        }, response => {
           this.saveState = 'error';
-          if (response.result && response.result.error) {
-            this.error = response.result.error.message;
-          } else {
-            this.error = 'Unknown error :(';
-          }
-          console.error(response);
+          this.error = getError(response);
         });
     },
   },
@@ -137,7 +136,8 @@ function loadRecords(component) {
   appModel.fetchLastRecords(getSpreadsheetIdFromRoute(component))
     .then((response) => {
       component.recordsState = 'loaded';
-      const lastRecords = response.result.values.reverse().slice(0, 100);
+      const values = response.result.values || [];
+      const lastRecords = values.reverse().slice(0, 100);
       component.lastRecords = lastRecords;
       const lastDate = getLastDate(lastRecords);
       if (lastDate) component.start = lastDate;

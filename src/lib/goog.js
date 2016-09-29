@@ -46,22 +46,17 @@ function gapiReady() {
 
 function listFiles() {
   gapi.client.drive.files.list({
-    q: "mimeType='application/vnd.google-apps.spreadsheet'",
+    q: "mimeType='application/vnd.google-apps.spreadsheet' and trashed = false",
     pageSize: 100,
   }).execute(response => {
     appModel.files = response.files;
   });
 }
 
-export function createFile(name) {
-  const fileMetadata = {
-    name,
-    mimeType: 'application/vnd.google-apps.spreadsheet'
-  };
+export function getError(response) {
+  if (response.result && response.result.error) {
+    return response.result.error.message;
+  }
 
-  return gapi.client.drive.files.create({
-    resource: fileMetadata,
-  }).execute(response => {
-    console.log(response);
-  });
+  return 'Unknown error :(';
 }
