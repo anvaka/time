@@ -4,7 +4,7 @@
     <form @submit.prevent='create'>
       <div class='input-field'>
         <label for='name'>File name:</label>
-        <input id='name' type='text' v-model='name'>
+        <input id='name' type='text' v-model='name' autofocus>
       </div>
       <input type='submit' class='waves-effect waves-light btn col s12' value='Create new file' v-if='status === ""'/>
     </form>

@@ -141,6 +141,10 @@ function loadRecords(component) {
       component.lastRecords = lastRecords;
       const lastDate = getLastDate(lastRecords);
       if (lastDate) component.start = lastDate;
+      else {
+        component.start = getNow();
+        component.end = getNow();
+      }
     }, (response) => {
       console.error('failed to load range', response);
     });
