@@ -7,6 +7,7 @@ require('materialize-css/bin/materialize.css');
 
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import vueClap from 'vue-clap'
 
 import App from './App';
 import ListFiles from './ListFiles';
@@ -16,6 +17,7 @@ import CreateTimeLog from './CreateTimeLog';
 import {initializeGoogleApi} from './lib/goog.js';
 
 Vue.use(VueRouter);
+Vue.use(vueClap);
 
 const router = new VueRouter();
 router.map({

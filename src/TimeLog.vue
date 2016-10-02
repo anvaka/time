@@ -2,11 +2,11 @@
   <div>
     <form novalidate @submit.prevent='logIt'>
       <div>
-        <label>Start <a href='#' @click.prevent='setNow("start")'>set to now</a></label>
+        <label>Start <a href='#' v-clap.prevent='setNow("start")'>set to now</a></label>
         <input id='start' type='datetime-local' v-model='start'>
       </div>
       <div>
-        <label>End <a href='#' @click.prevent='setNow("end")'>set to now</a></label>
+        <label>End <a href='#' v-clap.prevent='setNow("end")'>set to now</a></label>
         <input id='end' type='datetime-local' v-model='end'>
       </div>
       <div class='input-field'>
@@ -53,7 +53,7 @@
           </tr>
         </tbody>
       </table>
-      <div class='fixed-action-btn' style='bottom: 45px; right: 24px;'>
+      <div class='fixed-action-btn' style='bottom: 12px; right: 12px;'>
         <a class='btn-floating btn-small red' :href='editLink' title='Edit records...' target='_blank'>
           <i class='small material-icons'>mode_edit</i>
         </a>
@@ -209,4 +209,7 @@ function toDateInputStr(d) {
 </script>
 
 <style>
+div.fixed-action-btn {
+  z-index: 9;
+}
 </style>
