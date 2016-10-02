@@ -45,7 +45,12 @@ let apiInitialized = false;
  * means that the token is refreshed behind the scenes, and no UI is shown to the user.
  */
 export function signIn(immediate) {
-  return gapi.auth.authorize({client_id: CLIENT_ID, scope: SCOPES, immediate}, handleAuthResult);
+  return gapi.auth.authorize({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    immediate,
+    cookie_policy: 'single_host_origin',
+  }, handleAuthResult);
 }
 
 export function signOut() {
