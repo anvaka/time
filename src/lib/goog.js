@@ -48,13 +48,29 @@ export function signIn(immediate) {
   return gapi.auth.authorize({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    immediate,
-    cookie_policy: 'single_host_origin',
+    immediate
   }, handleAuthResult);
 }
 
-export function signOut() {
-  return gapi.auth.signOut();
+export function signOut(callback) {
+  const token = gapi.auth.getToken();
+  if (token) {
+    const accessToken = token.access_token;
+    const revokeUrl = `https://accounts.google.com/o/oauth2/revoke?token=${accessToken}`;
+
+    window.jQuery.ajax({
+      type: 'GET',
+      url: revokeUrl,
+      async: false,
+      contentType: 'application/json',
+      dataType: 'jsonp',
+      success: callback,
+      error: callback
+    });
+  }
+
+  gapi.auth.signOut();
+  setTimeout(callback, 0);
 }
 
 /**

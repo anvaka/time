@@ -50,8 +50,7 @@ export default {
       signIn();
     },
     onSignOutClick() {
-      signOut()
-      window.location.reload();
+      signOut(() => window.location.reload());
     }
   },
   computed: {
