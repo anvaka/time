@@ -23,6 +23,7 @@
         Refresh the page maybe?
       </div>
     </div>
+
   </div>
 </template>
 

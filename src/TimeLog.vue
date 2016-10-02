@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h4>{{title}} <small><a :href='editLink' target='_blank' title='edit in Google Sheets'><i class='material-icons'>mode_edit</i></a></small></h4>
     <form novalidate @submit.prevent='logIt'>
       <div>
         <label>Start <a href='#' @click.prevent='setNow("start")'>set to now</a></label>
@@ -34,25 +33,32 @@
         Refresh the page maybe?
       </div>
     </div>
-    <table v-if='recordsState === "loaded"'>
-      <thead>
-        <tr>
-          <th data-field='start'>Start</th>
-          <th data-field='end'>End</th>
-          <th data-field='what'>
-            What?
-            <a href='#' @click.prevent='refreshRecords' class='right' title='refresh'>&#x21bb;</a>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for='record in lastRecords'>
-          <td>{{record[0]}}</td>
-          <td>{{record[1]}}</td>
-          <td>{{record[2]}}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if='recordsState === "loaded"'>
+      <table >
+        <thead>
+          <tr>
+            <th data-field='start'>Start</th>
+            <th data-field='end'>End</th>
+            <th data-field='what'>
+              What?
+              <a href='#' @click.prevent='refreshRecords' class='right' title='refresh'>&#x21bb;</a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for='record in lastRecords'>
+            <td>{{record[0]}}</td>
+            <td>{{record[1]}}</td>
+            <td>{{record[2]}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class='fixed-action-btn' style='bottom: 45px; right: 24px;'>
+        <a class='btn-floating btn-small red' :href='editLink' title='Edit records...' target='_blank'>
+          <i class='small material-icons'>mode_edit</i>
+        </a>
+      </div>
+    </div>
 
     <div v-if='recordsState === "loading"'>
       <h4>Loading records...</h4>
@@ -65,7 +71,7 @@
 
 <script>
 import appModel from './lib/appModel.js';
-import {getError, fetchLastRecords, logTime} from './lib/goog.js';
+import {getError, fetchLastRecords, logTime, getSheetTitle} from './lib/goog.js';
 
 export default {
   data() {
@@ -79,17 +85,6 @@ export default {
     };
   },
   computed: {
-    title() {
-      for (let i = 0; i < appModel.files.length; ++i) {
-        let file = appModel.files[i];
-        if (file.id === this.$route.params.sheetId) {
-          return file.name;
-        }
-      }
-
-      return '';
-    },
-
     editLink() {
       const sheetId = getSpreadsheetIdFromRoute(this);
       return `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
@@ -97,7 +92,13 @@ export default {
   },
   route: {
     data() {
-      loadRecords(this);
+      appModel.pageName = 'Loading data...';
+      loadRecords(this).then(() => {
+        const sheetId = getSpreadsheetIdFromRoute(this);
+        getSheetTitle(sheetId, title => {
+          appModel.pageName = title;
+        });
+      })
     }
   },
 
@@ -136,7 +137,8 @@ export default {
 
 function loadRecords(component) {
   component.recordsState = 'loading';
-  fetchLastRecords(getSpreadsheetIdFromRoute(component))
+
+  return fetchLastRecords(getSpreadsheetIdFromRoute(component))
     .then((response) => {
       component.recordsState = 'loaded';
       const values = response.result.values || [];
@@ -203,6 +205,7 @@ function toDateInputStr(d) {
     return number;
   }
 }
+
 </script>
 
 <style>

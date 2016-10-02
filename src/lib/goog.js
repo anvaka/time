@@ -33,6 +33,10 @@ const SCOPES = [
   'https://www.googleapis.com/auth/spreadsheets',
 ];
 
+// We use this to quickly lookup sheet name by their id.
+// See getSheetTitle() method
+const sheetIdToTitle = new Map();
+
 let apiInitialized = false;
 
 /**
@@ -125,6 +129,22 @@ export function getError(response) {
   return 'Unknown error :(';
 }
 
+export function getSheetTitle(spreadsheetId, callback) {
+  if (sheetIdToTitle.has(spreadsheetId)) {
+    const title = sheetIdToTitle.get(spreadsheetId);
+    setTimeout(() => callback(title), 0);
+    return;
+  }
+
+  gapi.client.sheets.spreadsheets.get({
+    spreadsheetId,
+    fields: 'properties/title'
+  }).then(response => {
+    const title = get(response, 'result.properties.title');
+    sheetIdToTitle.set(spreadsheetId, title);
+    callback(title);
+  });
+}
 
 function handleAuthResult(authResult) {
   appModel.authenticated = authResult && !authResult.error;
@@ -148,6 +168,25 @@ function listTimeSheetFiles() {
   }).execute(response => {
     appModel.filesLoaded = true;
     appModel.files = response.files;
+    makeTitleIndex(response.files);
   });
 }
 
+function makeTitleIndex(files) {
+  files.forEach(file => {
+    sheetIdToTitle.set(file.id, file.name);
+  });
+}
+
+function get(obj, path) {
+  if (!obj) return obj;
+
+  const parts = path.split('.');
+  for (let i = 0; i < parts.length; ++i) {
+    const key = parts[i];
+    obj = obj[key];
+    if (!obj) return obj;
+  }
+
+  return obj;
+}

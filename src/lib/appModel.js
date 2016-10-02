@@ -8,6 +8,8 @@ const appModel = {
   sheetsAPIReady: false,
   filesLoaded: false,
   files: [],
+
+  pageName: '',
 };
 
 export default appModel;

@@ -6,7 +6,7 @@
       </p>
     </div>
     <div v-if='filesLoaded && !empty'>
-      <h4>Files</h4>
+      <h4>Your Sheets</h4>
       <div class="collection">
         <a class="collection-item"
            v-for='file in files'
@@ -27,6 +27,11 @@ import appModel from './lib/appModel.js';
 export default {
   data() {
     return appModel;
+  },
+  route: {
+    data() {
+      appModel.pageName = 'Select Sheet';
+    }
   },
 
   computed: {
