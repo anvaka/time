@@ -35,8 +35,9 @@ export default {
     unknown() {
       return appModel.authStatus === 'unknown';
     },
+
     loaded() {
-      const isLoaded = appModel.authStatus === 'ok' && appModel.sheetsReady;
+      const isLoaded = appModel.authStatus === 'ok' && appModel.sheetsAPIReady;
       return isLoaded;
     },
 

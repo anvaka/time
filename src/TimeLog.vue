@@ -65,7 +65,7 @@
 
 <script>
 import appModel from './lib/appModel.js';
-import {getError} from './lib/goog.js';
+import {getError, fetchLastRecords, logTime} from './lib/goog.js';
 
 export default {
   data() {
@@ -112,10 +112,12 @@ export default {
 
     logIt() {
       this.saveState = 'saving';
+
       const start = parseDate(this.start);
       const end = parseDate(this.end);
       const spreadsheetId = getSpreadsheetIdFromRoute(this);
-      appModel.logTime(spreadsheetId, start, end, this.what)
+
+      logTime(spreadsheetId, start, end, this.what)
         .then(() => {
           this.lastRecords.unshift([start, end, this.what]);
           this.start = this.end;
@@ -134,7 +136,7 @@ export default {
 
 function loadRecords(component) {
   component.recordsState = 'loading';
-  appModel.fetchLastRecords(getSpreadsheetIdFromRoute(component))
+  fetchLastRecords(getSpreadsheetIdFromRoute(component))
     .then((response) => {
       component.recordsState = 'loaded';
       const values = response.result.values || [];

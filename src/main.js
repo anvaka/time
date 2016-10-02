@@ -9,7 +9,7 @@ import ListFiles from './ListFiles';
 import TimeLog from './TimeLog';
 import CreateTimeLog from './CreateTimeLog';
 
-import {init} from './lib/goog.js';
+import {initializeGoogleApi} from './lib/goog.js';
 
 Vue.use(VueRouter);
 
@@ -28,4 +28,6 @@ router.map({
 
 router.start(App, '#app');
 
-init();
+// We immadiately try to initialize google API, even if client is not
+// yet loaded:
+initializeGoogleApi();

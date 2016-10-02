@@ -27,8 +27,7 @@
 </template>
 
 <script>
-import appModel from './lib/appModel.js';
-import {getError} from './lib/goog.js';
+import {getError, createSpreadsheet} from './lib/goog.js';
 
 export default {
   data() {
@@ -42,7 +41,7 @@ export default {
   methods: {
     create() {
       this.status = 'saving';
-      appModel.createFile(this.name).then(result => {
+      createSpreadsheet(this.name).then(result => {
         this.status = '';
         const {spreadsheetId} = result;
         this.$router.go(`/time-log/${spreadsheetId}`);
@@ -53,6 +52,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>
