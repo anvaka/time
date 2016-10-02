@@ -7,7 +7,7 @@
       <router-view class="view" keep-alive></router-view>
     </div>
     <div v-if="needsAuth">
-      <h1>Welcome to Sheetime!</h1>
+      <h1>Welcome to Time Interface!</h1>
       <p>
         This is just a simple interface to Google Sheets, that allows you to
         log your time. Log it here, and analyze from Google Sheets later

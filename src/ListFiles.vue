@@ -1,11 +1,18 @@
 <template>
   <div>
-    <h3>Choose your time log <small>or <a v-link="{path: '/create-time-log'}">create a new log</a></small></h3>
+    <div v-if='empty'>
+      <h3>No time sheets?</h3>
+      <p>I could not find any time logs in your account. <a v-link="{path: '/create-time-log'}">Create a new time log</a>.
+      </p>
+    </div>
+    <div v-else>
+      <h3>Choose your time log <small>or <a v-link="{path: '/create-time-log'}">create a new time log</a></small></h3>
       <div class="collection">
         <a class="collection-item"
            v-for='file in files'
            v-link="{path: '/time-log/' + file.id}">{{file.name}}</a>
       </div>
+    </div>
   </div>
 </template>
 
@@ -16,6 +23,12 @@ export default {
   data() {
     return appModel;
   },
+
+  computed: {
+    empty() {
+      return appModel.files.length === 0;
+    }
+  }
 };
 </script>
 
