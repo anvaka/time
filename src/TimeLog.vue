@@ -68,10 +68,6 @@ import appModel from './lib/appModel.js';
 import {getError} from './lib/goog.js';
 
 export default {
-  created() {
-    loadRecords(this);
-  },
-
   data() {
     return {
       recordsState: 'loading',
@@ -97,6 +93,11 @@ export default {
     editLink() {
       const sheetId = getSpreadsheetIdFromRoute(this);
       return `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
+    }
+  },
+  route: {
+    data() {
+      loadRecords(this);
     }
   },
 
