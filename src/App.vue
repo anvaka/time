@@ -1,48 +1,70 @@
 <template>
-  <div class='container'>
-    <div v-if="unknown">
-      <h3>Checking authentication...<h3>
+  <div>
+    <div class="navbar-fixed">
+      <nav>
+        <div class='nav-wrapper'>
+          <a href='#' class='brand-logo'>Time Log</a>
+          <a href='#' data-activates='mobile-demo' class='button-collapse'><i class='material-icons'>menu</i></a>
+          <ul id='nav-mobile' class='right hide-on-med-and-down'>
+            <li v-if='authenticated'><a href='#' @click.prevent='onSignOutClick'>Sign out</a></li>
+          </ul>
+          <ul class='side-nav' id='mobile-demo'>
+            <li v-if='authenticated'><a href='#' @click.prevent='onSignOutClick'>Sign out</a></li>
+          </ul>
+        </div>
+      </nav>
     </div>
-    <div v-if="loaded">
-      <router-view class="view" keep-alive></router-view>
+    <div class='container'>
+      <div v-if='unknown'>
+        <h3>Checking authentication...<h3>
+      </div>
+      <div v-if='apiLoaded'>
+        <router-view class='view' keep-alive></router-view>
+      </div>
+      <div v-if='needsAuthentication'>
+        <h1>Welcome!</h1>
+        <p>
+          This is a simple interface to Google Sheets, that allows you to
+          log your time. Log it here, and analyze from Google Sheets later
+        </p>
+        <a class='waves-effect waves-light btn' @click='onSignInClick'>Sign in to Google Sheets</a>
+      </div>
     </div>
-    <div v-if="needsAuth">
-      <h1>Welcome to Time Interface!</h1>
-      <p>
-        This is just a simple interface to Google Sheets, that allows you to
-        log your time. Log it here, and analyze from Google Sheets later
-      </p>
-      <a class="waves-effect waves-light btn" @click='onSigninClick'>Sign in to Google Sheets</a>
-    </div>
-
   </div>
 </template>
 
 <script>
 import appModel from './lib/appModel.js';
-import {signin} from './lib/goog.js';
+import {signIn, signOut} from './lib/goog.js';
 
 export default {
+  ready() {
+    $('.button-collapse').sideNav();
+  },
   data() {
     return appModel;
   },
+
   methods: {
-    onSigninClick() {
-      signin();
+    onSignInClick() {
+      signIn();
     },
+    onSignOutClick() {
+      signOut()
+      window.location.reload();
+    }
   },
   computed: {
     unknown() {
-      return appModel.authStatus === 'unknown';
+      return appModel.authenticated === undefined;
     },
 
-    loaded() {
-      const isLoaded = appModel.authStatus === 'ok' && appModel.sheetsAPIReady;
-      return isLoaded;
+    apiLoaded() {
+      return appModel.authenticated && appModel.sheetsAPIReady;
     },
 
-    needsAuth() {
-      return appModel.authStatus === 'error';
+    needsAuthentication() {
+      return appModel.authenticated === false;
     },
   },
 };
@@ -54,7 +76,12 @@ html {
 }
 
 body {
-  display: flex;
-  height: 100%;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+main {
+  flex: 1 0 auto;
 }
 </style>

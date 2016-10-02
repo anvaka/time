@@ -40,8 +40,12 @@ let apiInitialized = false;
  * @param {bool} immediate - if true, then login uses "immediate mode", which
  * means that the token is refreshed behind the scenes, and no UI is shown to the user.
  */
-export function signin(immediate) {
+export function signIn(immediate) {
   return gapi.auth.authorize({client_id: CLIENT_ID, scope: SCOPES, immediate}, handleAuthResult);
+}
+
+export function signOut() {
+  return gapi.auth.signOut();
 }
 
 /**
@@ -105,7 +109,7 @@ export function initializeGoogleApi() {
   apiInitialized = true;
 
   // Attempt to sign in in background
-  signin(/* immediate = */ true);
+  signIn(/* immediate = */ true);
 }
 
 /**
@@ -123,10 +127,9 @@ export function getError(response) {
 
 
 function handleAuthResult(authResult) {
-  const authenticated = authResult && !authResult.error;
-  appModel.authStatus = authenticated ? 'ok' : 'error';
+  appModel.authenticated = authResult && !authResult.error;
 
-  if (authenticated) loadAPIs();
+  if (appModel.authenticated) loadAPIs();
 }
 
 function loadAPIs() {
@@ -143,6 +146,7 @@ function listTimeSheetFiles() {
     q: "mimeType='application/vnd.google-apps.spreadsheet' and trashed = false",
     pageSize: 100,
   }).execute(response => {
+    appModel.filesLoaded = true;
     appModel.files = response.files;
   });
 }

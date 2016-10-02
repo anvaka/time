@@ -24,6 +24,7 @@ module.exports = {
     'no-param-reassign': 0,
   },
   globals: {
-    gapi: true
+    gapi: true,
+    '$': true
   }
 }

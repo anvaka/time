@@ -2,15 +2,20 @@
   <div>
     <div v-if='empty'>
       <h3>No time sheets?</h3>
-      <p>I could not find any time logs in your account. <a v-link="{path: '/create-time-log'}">Create a new time log</a>.
+      <p>I could not find any time logs in your account. <a v-link="{path: '/create-time-log'}">Create new time log</a>.
       </p>
     </div>
-    <div v-else>
-      <h3>Choose your time log <small>or <a v-link="{path: '/create-time-log'}">create a new time log</a></small></h3>
+    <div v-if='filesLoaded && !empty'>
+      <h4>Files</h4>
       <div class="collection">
         <a class="collection-item"
            v-for='file in files'
            v-link="{path: '/time-log/' + file.id}">{{file.name}}</a>
+      </div>
+      <div class='fixed-action-btn' style='bottom: 45px; right: 24px;'>
+        <a class='btn-floating btn-large red' v-link="{path: '/create-time-log'}" title='Create new time log'>
+          <i class='large material-icons'>add</i>
+        </a>
       </div>
     </div>
   </div>
@@ -26,7 +31,7 @@ export default {
 
   computed: {
     empty() {
-      return appModel.files.length === 0;
+      return appModel.files.length === 0 && appModel.filesLoaded;
     }
   }
 };
