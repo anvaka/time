@@ -7,9 +7,11 @@
           <a href='#' data-activates='mobile-demo' class='button-collapse'><i class='material-icons'>menu</i></a>
           <ul id='nav-mobile' class='right hide-on-med-and-down'>
             <li v-if='authenticated'><a href='#' @click.prevent='onSignOutClick'>Sign out</a></li>
+            <li><a href='https://github.com/anvaka/time'>Source code</a></li>
           </ul>
           <ul class='side-nav' id='mobile-demo'>
             <li v-if='authenticated'><a href='#' @click.prevent='onSignOutClick'>Sign out</a></li>
+            <li><a href='https://github.com/anvaka/time'>Source code</a></li>
           </ul>
         </div>
       </nav>
@@ -28,6 +30,10 @@
           log your time. Log it here, and analyze from Google Sheets later
         </p>
         <a class='waves-effect waves-light btn' @click='onSignInClick'>Sign in to Google Sheets</a>
+        <div>
+          <h4>Demo</h4>
+        <iframe src="https://www.youtube.com/embed/5e8K0LMdTmw" frameborder="0" allowfullscreen class='video-demo'></iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -90,12 +96,29 @@ div.fixed-action-btn {
   right: 12px;
 }
 
+iframe.video-demo {
+  width: 853px;
+  height: 480px;
+}
+
 @media only screen and (max-width: 992px) {
   nav .brand-logo {
     max-width: 200px;
     text-overflow: ellipsis;
     overflow: hidden;
     margin-left: 0;
+  }
+
+  iframe.video-demo {
+    width: 560px;
+    height: 315px;
+  }
+}
+
+@media only screen and (max-width: 560px) {
+  iframe.video-demo {
+    width: 320px;
+    height: 180px;
   }
 }
 
