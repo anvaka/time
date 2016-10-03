@@ -12,9 +12,9 @@
            v-for='file in files'
            v-link="{path: '/time-log/' + file.id}">{{file.name}}</a>
       </div>
-      <div class='fixed-action-btn' style='bottom: 45px; right: 24px;'>
-        <a class='btn-floating btn-large red' v-link="{path: '/create-time-log'}" title='Create new time log'>
-          <i class='large material-icons'>add</i>
+      <div class='fixed-action-btn'>
+        <a class='btn-floating btn-small red' v-link="{path: '/create-time-log'}" title='Create new time log'>
+          <i class='small material-icons'>add</i>
         </a>
       </div>
     </div>
@@ -41,6 +41,3 @@ export default {
   }
 };
 </script>
-
-<style>
-</style>

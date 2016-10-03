@@ -1,10 +1,4 @@
 // This is the entry file.
-//
-// First, patch for https://github.com/Dogfalo/materialize/issues/1229
-window.jQuery = require('jquery');
-require('materialize-css/bin/materialize.js');
-require('materialize-css/bin/materialize.css');
-
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import vueClap from 'vue-clap'

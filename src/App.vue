@@ -84,6 +84,12 @@ nav .brand-logo {
   margin-left: 12px;
 }
 
+div.fixed-action-btn {
+  z-index: 9;
+  bottom: 12px;
+  right: 12px;
+}
+
 @media only screen and (max-width: 992px) {
   nav .brand-logo {
     max-width: 200px;
@@ -92,4 +98,5 @@ nav .brand-logo {
     margin-left: 0;
   }
 }
+
 </style>

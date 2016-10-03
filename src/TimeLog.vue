@@ -207,9 +207,3 @@ function toDateInputStr(d) {
 }
 
 </script>
-
-<style>
-div.fixed-action-btn {
-  z-index: 9;
-}
-</style>
