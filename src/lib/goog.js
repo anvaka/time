@@ -64,13 +64,24 @@ export function signOut(callback) {
       async: false,
       contentType: 'application/json',
       dataType: 'jsonp',
-      success: callback,
-      error: callback
+      success: forwardCallback,
+      error: forwardCallback
     });
   }
 
   gapi.auth.signOut();
-  setTimeout(callback, 0);
+  setTimeout(forwardCallback, 0);
+
+  function forwardCallback() {
+    cleanAppModel();
+    callback();
+  }
+}
+
+function cleanAppModel() {
+  appModel.filesLoaded = false;
+  appModel.files = [];
+  appModel.authenticated = undefined;
 }
 
 /**
@@ -80,7 +91,7 @@ export function fetchLastRecords(spreadsheetId) {
   return gapi.client.sheets.spreadsheets.values.get({
     spreadsheetId,
     range: TIME_RANGE,
-  });
+  }).then(id, checkError);
 }
 
 /**
@@ -92,7 +103,7 @@ export function logTime(spreadsheetId, start, end, what) {
     valueInputOption: 'USER_ENTERED',
     range: TIME_RANGE,
     values: [[start, end, what]],
-  });
+  }).then(id, checkError);
 }
 
 /**
@@ -107,7 +118,7 @@ export function createSpreadsheet(name) {
     });
 
     return result;
-  });
+  }, checkError);
 }
 
 /**
@@ -190,7 +201,7 @@ function listTimeSheetFiles() {
     appModel.filesLoaded = true;
     appModel.files = response.files;
     makeTitleIndex(response.files);
-  });
+  }, checkError);
 }
 
 function makeTitleIndex(files) {
@@ -210,4 +221,15 @@ function get(obj, path) {
   }
 
   return obj;
+}
+
+function id(x) { return x; }
+
+function checkError(response) {
+  if (response.status === 401) {
+    // this is invalid auth. Refresh the page should fix it
+    window.location.reload();
+  }
+
+  return response;
 }
