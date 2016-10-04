@@ -45,6 +45,7 @@ import {signIn, signOut} from './lib/goog.js';
 
 export default {
   ready() {
+    // This is just something required by materialize-css to let side navigation work:
     $('.button-collapse').sideNav();
   },
   data() {
@@ -56,9 +57,12 @@ export default {
       signIn();
     },
     onSignOutClick() {
+      // TODO: should I also navigate to root path?
       signOut(() => window.location.reload());
     }
   },
+  // The signed in state is a little bit tricky, since we want to show loader
+  // only when visitor is not authenticated.
   computed: {
     unknown() {
       return appModel.authenticated === undefined;

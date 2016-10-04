@@ -70,8 +70,12 @@
 </template>
 
 <script>
+// This is the heart of the application. This file may not be the prettiest.
 import appModel from './lib/appModel.js';
-import {getError, fetchLastRecords, logTime, getSheetTitle} from './lib/goog.js';
+import {getError, logTime, getSheetTitle} from './lib/goog.js';
+import {convertDateToSheetsDateString, getNow} from './lib/dateUtils.js';
+import getLastRecordsForComponent from './lib/getLastRecordsForComponent.js';
+import getSpreadsheetIdFromComponentRoute from './lib/getSpreadsheetIdFromComponentRoute.js';
 
 export default {
   data() {
@@ -85,16 +89,20 @@ export default {
     };
   },
   computed: {
+    /**
+     * Provides a Google Docs link to edit a spreadsheet
+     */
     editLink() {
-      const sheetId = getSpreadsheetIdFromRoute(this);
+      const sheetId = getSpreadsheetIdFromComponentRoute(this);
       return `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
     }
   },
   route: {
     data() {
       appModel.pageName = 'Loading data...';
-      loadRecords(this).then(() => {
-        const sheetId = getSpreadsheetIdFromRoute(this);
+
+      getLastRecordsForComponent(this).then(() => {
+        const sheetId = getSpreadsheetIdFromComponentRoute(this);
         getSheetTitle(sheetId, title => {
           appModel.pageName = title;
         });
@@ -104,7 +112,7 @@ export default {
 
   methods: {
     refreshRecords() {
-      loadRecords(this);
+      getLastRecordsForComponent(this);
     },
 
     setNow(what) {
@@ -114,12 +122,13 @@ export default {
     logIt() {
       this.saveState = 'saving';
 
-      const start = parseDate(this.start);
-      const end = parseDate(this.end);
-      const spreadsheetId = getSpreadsheetIdFromRoute(this);
+      const start = convertDateToSheetsDateString(this.start);
+      const end = convertDateToSheetsDateString(this.end);
+      const spreadsheetId = getSpreadsheetIdFromComponentRoute(this);
 
       logTime(spreadsheetId, start, end, this.what)
         .then(() => {
+          // TODO: This is not very reliable.
           this.lastRecords.unshift([start, end, this.what]);
           this.start = this.end;
           this.end = getNow();
@@ -133,77 +142,4 @@ export default {
     },
   },
 };
-
-
-function loadRecords(component) {
-  component.recordsState = 'loading';
-
-  return fetchLastRecords(getSpreadsheetIdFromRoute(component))
-    .then((response) => {
-      component.recordsState = 'loaded';
-      const values = response.result.values || [];
-      const lastRecords = values.reverse().slice(0, 100);
-      component.lastRecords = lastRecords;
-      const lastDate = getLastDate(lastRecords);
-      if (lastDate) component.start = lastDate;
-      else {
-        component.start = getNow();
-        component.end = getNow();
-      }
-    }, (response) => {
-      console.error('failed to load range', response);
-    });
-}
-
-function getSpreadsheetIdFromRoute(component) {
-  return component.$route.params.sheetId;
-}
-
-function parseDate(str) {
-  return parseDateObject(new Date(str));
-}
-
-function parseDateObject(dateObject) {
-  return dateObject.toISOString().substr(0, '2016-09-27T02:10:00'.length)
-    .replace(/T/, ' ')
-    .replace(/-/g, '/');
-}
-
-function getNow() {
-  return toDateInputStr(new Date());
-}
-
-function getLastDate(records) {
-  if (records.length === 0) return '';
-
-  const lastRecord = records[0];
-  if (lastRecord.length < 2) return '';
-
-  const lastEnd = lastRecord[1];
-
-  if (!lastEnd) return '';
-
-  const d = new Date(lastEnd);
-  if (Number.isNaN(d.getDate())) return '';
-
-  return toDateInputStr(d);
-}
-
-function toDateInputStr(d) {
-  /* eslint prefer-template: 0 */
-  return d.getFullYear() +
-        '-' + pad(d.getMonth() + 1) +
-        '-' + pad(d.getDate()) +
-        'T' + pad(d.getHours()) +
-        ':' + pad(d.getMinutes()) +
-        ':' + pad(d.getSeconds());
-
-  function pad(number) {
-    if (number < 10) {
-      return '0' + number;
-    }
-    return number;
-  }
-}
-
 </script>

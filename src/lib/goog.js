@@ -1,5 +1,5 @@
 /**
- * The file provides a wrapper on top of google API.
+ * The file provides a wrapper on top of Google API.
  */
 import appModel from './appModel.js';
 import createLogTemplate from './logTemplate.js';
@@ -161,6 +161,9 @@ export function getError(response) {
   return 'Unknown error :(';
 }
 
+/**
+ * Gets a title of a sheet
+ */
 export function getSheetTitle(spreadsheetId, callback) {
   if (sheetIdToTitle.has(spreadsheetId)) {
     const title = sheetIdToTitle.get(spreadsheetId);
