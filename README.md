@@ -40,3 +40,23 @@ I liked the API and hope you will find this project helpful for your learning an
 # License
 
 The code is fully available under MIT license.
+
+# Development
+
+If you want to develop this tool on your computer, simply do the following:
+
+```
+git clone https://github.com/anvaka/time.git
+cd time
+npm install
+```
+
+Now you are ready to run dev server:
+
+```
+npm run dev
+```
+
+The tool uses [vue](http://v1.vuejs.org/guide/) and [materialize](http://materializecss.com/).
+The hosting and secure certificates are provided by https://www.netlify.com/ - free
+for open source projects.
