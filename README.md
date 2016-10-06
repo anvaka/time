@@ -57,6 +57,8 @@ Now you are ready to run dev server:
 npm run dev
 ```
 
+Then open [http://localhost:8091](http://localhost:8091).
+
 The tool uses [vue](http://v1.vuejs.org/guide/) and [materialize](http://materializecss.com/).
 The hosting and secure certificates are provided by https://www.netlify.com/ - free
 for open source projects.
