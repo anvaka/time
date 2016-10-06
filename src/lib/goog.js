@@ -70,7 +70,9 @@ export function signOut(callback) {
   }
 
   gapi.auth.signOut();
-  setTimeout(forwardCallback, 0);
+
+  // Make sure we also forward callback right now, if there was no token.
+  if (!token) setTimeout(forwardCallback, 0);
 
   function forwardCallback() {
     cleanAppModel();
