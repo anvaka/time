@@ -10,7 +10,7 @@
         <input id='end' type='datetime-local' v-model='end'>
       </div>
       <div class='input-field'>
-        <label for='start'>What?</label>
+        <label for='what'>What?</label>
         <input id='what' type='text' v-model='what'>
       </div>
 
