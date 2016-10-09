@@ -119,7 +119,6 @@ export default {
       const start = convertDateToSheetsDateString(this.start);
       const end = convertDateToSheetsDateString(this.end);
       const spreadsheetId = getSpreadsheetIdFromComponentRoute(this);
-      console.log(start, end, this.start, this.end);
 
       logTime(spreadsheetId, start, end, this.what)
         .then(() => {
