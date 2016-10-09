@@ -1,8 +1,8 @@
 <template>
   <div>
     <form novalidate @submit.prevent='logIt'>
-      <date-time label='Start' :value='start'></date-time>
-      <date-time label='End' :value='end'></date-time>
+      <date-time label='Start' :value.sync='start'></date-time>
+      <date-time label='End' :value.sync='end'></date-time>
       <div class='input-field'>
         <label for='what'>What?</label>
         <input id='what' type='text' v-model='what'>
@@ -119,6 +119,7 @@ export default {
       const start = convertDateToSheetsDateString(this.start);
       const end = convertDateToSheetsDateString(this.end);
       const spreadsheetId = getSpreadsheetIdFromComponentRoute(this);
+      console.log(start, end, this.start, this.end);
 
       logTime(spreadsheetId, start, end, this.what)
         .then(() => {
