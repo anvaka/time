@@ -6,7 +6,7 @@
  * Given a string, attempts to parse it
  */
 export function convertDateToSheetsDateString(str) {
-  const dateObject = new Date(str);
+  const dateObject = new Date(str + 'Z');
 
   return dateObject.toISOString().substr(0, '2016-09-27T02:10:00'.length)
     .replace(/T/, ' ')

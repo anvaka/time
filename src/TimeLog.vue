@@ -1,16 +1,10 @@
 <template>
   <div>
     <form novalidate @submit.prevent='logIt'>
-      <div>
-        <label>Start <a href='#' v-clap.prevent='setNow("start")'>set to now</a></label>
-        <input id='start' type='datetime-local' v-model='start'>
-      </div>
-      <div>
-        <label>End <a href='#' v-clap.prevent='setNow("end")'>set to now</a></label>
-        <input id='end' type='datetime-local' v-model='end'>
-      </div>
+      <date-time label='Start' :value.sync='start'></date-time>
+      <date-time label='End' :value.sync='end'></date-time>
       <div class='input-field'>
-        <label for='start'>What?</label>
+        <label for='what'>What?</label>
         <input id='what' type='text' v-model='what'>
       </div>
 
@@ -76,6 +70,7 @@ import {getError, logTime, getSheetTitle} from './lib/goog.js';
 import {convertDateToSheetsDateString, getNow} from './lib/dateUtils.js';
 import getLastRecordsForComponent from './lib/getLastRecordsForComponent.js';
 import getSpreadsheetIdFromComponentRoute from './lib/getSpreadsheetIdFromComponentRoute.js';
+import DateTime from './DateTime.vue';
 
 export default {
   data() {
@@ -97,6 +92,9 @@ export default {
       return `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
     }
   },
+  components: {
+    DateTime
+  },
   route: {
     data() {
       appModel.pageName = 'Loading data...';
@@ -115,10 +113,6 @@ export default {
       getLastRecordsForComponent(this);
     },
 
-    setNow(what) {
-      this[what] = getNow();
-    },
-
     logIt() {
       this.saveState = 'saving';
 
@@ -132,6 +126,7 @@ export default {
           this.lastRecords.unshift([start, end, this.what]);
           this.start = this.end;
           this.end = getNow();
+
           this.what = '';
           this.saveState = 'done';
           this.error = '';

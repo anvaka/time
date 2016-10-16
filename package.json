@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.0.0",
+    "flatpickr": "^2.0.5",
     "jquery": "^2.2.4",
     "materialize-css": "^0.97.7",
     "ngraph.events": "0.0.4",
