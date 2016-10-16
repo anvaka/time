@@ -4,6 +4,10 @@
       <date-time label='Start' :value.sync='start'></date-time>
       <date-time label='End' :value.sync='end'></date-time>
       <div class='input-field'>
+        <label for='who'>Who?</label>
+        <input id='who' type='text' v-model='who'>
+      </div>
+      <div class='input-field'>
         <label for='what'>What?</label>
         <input id='what' type='text' v-model='what'>
       </div>
@@ -33,6 +37,8 @@
           <tr>
             <th data-field='start'>Start</th>
             <th data-field='end'>End</th>
+            <th data-field='duration'>Duration</th>
+            <th data-field='who'>Who?</th>
             <th data-field='what'>
               What?
               <a href='#' @click.prevent='refreshRecords' class='right' title='refresh'>&#x21bb;</a>
@@ -44,6 +50,8 @@
             <td>{{record[0]}}</td>
             <td>{{record[1]}}</td>
             <td>{{record[2]}}</td>
+            <td>{{record[3]}}</td>
+            <td>{{record[4]}}</td>
           </tr>
         </tbody>
       </table>
@@ -120,14 +128,16 @@ export default {
       const end = convertDateToSheetsDateString(this.end);
       const spreadsheetId = getSpreadsheetIdFromComponentRoute(this);
 
-      logTime(spreadsheetId, start, end, this.what)
+      logTime(spreadsheetId, start, end, this.duration, this.who, this.what)
         .then(() => {
           // TODO: This is not very reliable.
-          this.lastRecords.unshift([start, end, this.what]);
+          this.lastRecords.unshift([start, end, this.duration, this.who, this.what]);
           this.start = this.end;
           this.end = getNow();
 
           this.what = '';
+          this.who = '';
+          this.duration = '';
           this.saveState = 'done';
           this.error = '';
         }, response => {

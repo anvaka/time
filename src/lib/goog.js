@@ -18,13 +18,13 @@ const CLIENT_ID = '616901175953-k3qnrg34f7khs5a688k8l51oqn4f15o1.apps.googleuser
 //
 // By default we are using only three columns:
 //
-//     A        B       C
-// 1  Start    End     What?
+//     A        B       C          D    E
+// 1  Start    End     Duration   Who  What?
 // ---------------------------------
 // 2    records go here
 //
 // So, our final range is:
-const TIME_RANGE = 'A2:C'
+const TIME_RANGE = 'A2:E'
 
 const SCOPES = [
   // We need this to list all spreadsheet files
@@ -99,12 +99,12 @@ export function fetchLastRecords(spreadsheetId) {
 /**
  * Appends log entry to the given spreadsheet.
  */
-export function logTime(spreadsheetId, start, end, what) {
+export function logTime(spreadsheetId, start, end, duration, who, what) {
   return gapi.client.sheets.spreadsheets.values.append({
     spreadsheetId,
     valueInputOption: 'USER_ENTERED',
     range: TIME_RANGE,
-    values: [[start, end, what]],
+    values: [[start, end, duration, who, what]],
   }).then(id, checkError);
 }
 
