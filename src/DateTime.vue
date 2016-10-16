@@ -19,7 +19,7 @@ export default {
       enableTime: true,
       time_24hr: true,
       enableSeconds: true,
-      dateFormat: 'Y-m-dTH:i:S',
+      dateFormat: 'Y-m-dTH:i',
       utc: false,
 
       onChange() {

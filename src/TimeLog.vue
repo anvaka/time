@@ -35,9 +35,10 @@
       <table >
         <thead>
           <tr>
+            <th data-field='start'>Date</th>          
             <th data-field='start'>Start</th>
             <th data-field='end'>End</th>
-            <th data-field='duration'>Duration</th>
+            <th data-field='duration'>Hours</th>
             <th data-field='who'>Who?</th>
             <th data-field='what'>
               What?
@@ -47,8 +48,9 @@
         </thead>
         <tbody>
           <tr v-for='record in lastRecords'>
-            <td>{{record[0]}}</td>
-            <td>{{record[1]}}</td>
+            <td>{{record[0] | moment "dd MM/DD/YYYY"}}</td>
+            <td>{{record[0] | moment "h:mm a"}}</td>
+            <td>{{record[1] | moment "h:mm a"}}</td>
             <td>{{record[2]}}</td>
             <td>{{record[3]}}</td>
             <td>{{record[4]}}</td>
@@ -79,6 +81,7 @@ import {convertDateToSheetsDateString, getNow} from './lib/dateUtils.js';
 import getLastRecordsForComponent from './lib/getLastRecordsForComponent.js';
 import getSpreadsheetIdFromComponentRoute from './lib/getSpreadsheetIdFromComponentRoute.js';
 import DateTime from './DateTime.vue';
+import moment from 'moment'
 
 export default {
   data() {
@@ -127,11 +130,14 @@ export default {
       const start = convertDateToSheetsDateString(this.start);
       const end = convertDateToSheetsDateString(this.end);
       const spreadsheetId = getSpreadsheetIdFromComponentRoute(this);
+      const timeDiff = moment(this.end).diff(this.start, 'hours', true)
+      // round duration to nearest quarter hour
+      const duration = (Math.round(timeDiff * 4) / 4).toFixed(2);
 
-      logTime(spreadsheetId, start, end, this.duration, this.who, this.what)
+      logTime(spreadsheetId, start, end, duration, this.who, this.what)
         .then(() => {
           // TODO: This is not very reliable.
-          this.lastRecords.unshift([start, end, this.duration, this.who, this.what]);
+          this.lastRecords.unshift([start, end, duration, this.who, this.what]);
           this.start = this.end;
           this.end = getNow();
 
