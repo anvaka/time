@@ -130,20 +130,16 @@ export default {
       const start = convertDateToSheetsDateString(this.start);
       const end = convertDateToSheetsDateString(this.end);
       const spreadsheetId = getSpreadsheetIdFromComponentRoute(this);
-      const timeDiff = moment(this.end).diff(this.start, 'hours', true)
-      // round duration to nearest quarter hour
-      const duration = (Math.round(timeDiff * 4) / 4).toFixed(2);
 
-      logTime(spreadsheetId, start, end, duration, this.who, this.what)
+      logTime(spreadsheetId, start, end,  this.who, this.what)
         .then(() => {
           // TODO: This is not very reliable.
-          this.lastRecords.unshift([start, end, duration, this.who, this.what]);
+          this.lastRecords.unshift([start, end, this.who, this.what]);
           this.start = this.end;
           this.end = getNow();
 
           this.what = '';
           this.who = '';
-          this.duration = '';
           this.saveState = 'done';
           this.error = '';
         }, response => {
