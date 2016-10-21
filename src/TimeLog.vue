@@ -32,7 +32,7 @@
       </div>
     </div>
     <div v-if='recordsState === "loaded"'>
-      <table >
+      <table class="striped">
         <thead>
           <tr>
             <th data-field='start'>Date</th>          
@@ -48,9 +48,9 @@
         </thead>
         <tbody>
           <tr v-for='record in lastRecords'>
-            <td>{{record[0] | moment "dd MM/DD/YYYY"}}</td>
-            <td>{{record[0] | moment "h:mm a"}}</td>
-            <td>{{record[1] | moment "h:mm a"}}</td>
+            <td>{{record[0] | moment "ddd MM/DD/YY"}}</td>
+            <td>{{record[0] | moment "h:mma"}}</td>
+            <td>{{record[1] | moment "h:mma"}}</td>
             <td>{{record[2]}}</td>
             <td>{{record[3]}}</td>
             <td>{{record[4]}}</td>
