@@ -81,7 +81,6 @@ import {convertDateToSheetsDateString, getNow} from './lib/dateUtils.js';
 import getLastRecordsForComponent from './lib/getLastRecordsForComponent.js';
 import getSpreadsheetIdFromComponentRoute from './lib/getSpreadsheetIdFromComponentRoute.js';
 import DateTime from './DateTime.vue';
-import moment from 'moment'
 
 export default {
   data() {
@@ -131,15 +130,17 @@ export default {
       const end = convertDateToSheetsDateString(this.end);
       const spreadsheetId = getSpreadsheetIdFromComponentRoute(this);
 
-      logTime(spreadsheetId, start, end,  this.who, this.what)
+      logTime(spreadsheetId, start, end, this.who, this.what)
         .then(() => {
-          // TODO: This is not very reliable.
-          this.lastRecords.unshift([start, end, this.who, this.what]);
+          // Update the records
+          getLastRecordsForComponent(this);
+
+          // reset the fields
           this.start = this.end;
           this.end = getNow();
-
           this.what = '';
           this.who = '';
+
           this.saveState = 'done';
           this.error = '';
         }, response => {

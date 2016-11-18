@@ -107,7 +107,7 @@ export function logTime(spreadsheetId, start, end, who, what) {
     range: TIME_RANGE,
     values: [[start,
                end,
-               '=MROUND(indirect("b" & row()) - indirect("A" & row()),"0:15")',
+               '=MROUND(indirect("b" & row()) - indirect("A" & row()),"0:15")*24',
               who,
               what]],
   }).then(id, checkError);
