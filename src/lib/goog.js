@@ -12,7 +12,7 @@ import createLogTemplate from './logTemplate.js';
 // http://time.anvaka.com
 //
 // So if you want to run this on a different port, you'll need your own client id.
-const CLIENT_ID = '616901175953-k3qnrg34f7khs5a688k8l51oqn4f15o1.apps.googleusercontent.com';
+const CLIENT_ID = '217861150512-lre2vvn16g3pgs2tpsg8gor177cd5vfj.apps.googleusercontent.com';
 
 // Defines where all time log records are.
 //
