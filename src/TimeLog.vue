@@ -4,10 +4,6 @@
       <date-time label='Start' :value.sync='start'></date-time>
       <date-time label='End' :value.sync='end'></date-time>
       <div class='input-field'>
-        <label for='who'>Who?</label>
-        <input id='who' type='text' v-model='who'>
-      </div>
-      <div class='input-field'>
         <label for='what'>What?</label>
         <input id='what' type='text' v-model='what'>
       </div>
@@ -39,7 +35,6 @@
             <th data-field='start'>Start</th>
             <th data-field='end'>End</th>
             <th data-field='duration'>Hours</th>
-            <th data-field='who'>Who?</th>
             <th data-field='what'>
               What?
               <a href='#' @click.prevent='refreshRecords' class='right' title='refresh'>&#x21bb;</a>
@@ -130,7 +125,7 @@ export default {
       const end = convertDateToSheetsDateString(this.end);
       const spreadsheetId = getSpreadsheetIdFromComponentRoute(this);
 
-      logTime(spreadsheetId, start, end, this.who, this.what)
+      logTime(spreadsheetId, start, end, this.what)
         .then(() => {
           // Update the records
           getLastRecordsForComponent(this);
@@ -139,7 +134,6 @@ export default {
           this.start = this.end;
           this.end = getNow();
           this.what = '';
-          this.who = '';
 
           this.saveState = 'done';
           this.error = '';
