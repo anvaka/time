@@ -35,6 +35,7 @@
             <th data-field='start'>Start</th>
             <th data-field='end'>End</th>
             <th data-field='duration'>Hours</th>
+            <th data-field='who'>Project</th>
             <th data-field='what'>
               What?
               <a href='#' @click.prevent='refreshRecords' class='right' title='refresh'>&#x21bb;</a>
@@ -78,6 +79,12 @@ import getSpreadsheetIdFromComponentRoute from './lib/getSpreadsheetIdFromCompon
 import DateTime from './DateTime.vue';
 
 export default {
+  ready() {
+    // refresh our results after 15 minutes to ensure we stay logged in.
+    setInterval(() => {
+      this.refreshRecords();
+    }, 900000);
+  },
   data() {
     return {
       recordsState: 'loading',
