@@ -3,7 +3,7 @@
  */
 const appModel = {
   // Authenticated can be undefined, true or false. If it is undefined
-  // then we haven't attemted authentication yet.
+  // then we haven't attempted authentication yet.
   authenticated: undefined,
   sheetsAPIReady: false,
   filesLoaded: false,
