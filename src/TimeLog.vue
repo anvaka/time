@@ -28,11 +28,13 @@
       </div>
     </div>
     <div v-if='recordsState === "loaded"'>
-      <table >
+      <table class="striped">
         <thead>
           <tr>
+            <th data-field='start'>Date</th>          
             <th data-field='start'>Start</th>
             <th data-field='end'>End</th>
+            <th data-field='duration'>Hours</th>
             <th data-field='what'>
               What?
               <a href='#' @click.prevent='refreshRecords' class='right' title='refresh'>&#x21bb;</a>
@@ -41,9 +43,12 @@
         </thead>
         <tbody>
           <tr v-for='record in lastRecords'>
-            <td>{{record[0]}}</td>
-            <td>{{record[1]}}</td>
+            <td>{{record[0] | moment "ddd MM/DD/YY"}}</td>
+            <td>{{record[0] | moment "h:mma"}}</td>
+            <td>{{record[1] | moment "h:mma"}}</td>
             <td>{{record[2]}}</td>
+            <td>{{record[3]}}</td>
+            <td>{{record[4]}}</td>
           </tr>
         </tbody>
       </table>
@@ -73,6 +78,12 @@ import getSpreadsheetIdFromComponentRoute from './lib/getSpreadsheetIdFromCompon
 import DateTime from './DateTime.vue';
 
 export default {
+  ready() {
+    // refresh our results after 15 minutes to ensure we stay logged in.
+    setInterval(() => {
+      this.refreshRecords();
+    }, 900000);
+  },
   data() {
     return {
       recordsState: 'loading',
@@ -122,12 +133,14 @@ export default {
 
       logTime(spreadsheetId, start, end, this.what)
         .then(() => {
-          // TODO: This is not very reliable.
-          this.lastRecords.unshift([start, end, this.what]);
+          // Update the records
+          getLastRecordsForComponent(this);
+
+          // reset the fields
           this.start = this.end;
           this.end = getNow();
-
           this.what = '';
+
           this.saveState = 'done';
           this.error = '';
         }, response => {

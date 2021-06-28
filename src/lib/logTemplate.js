@@ -17,8 +17,8 @@ function createTimeSheet(title) {
       gridProperties: {
         // We want the first row to be frozen
         frozenRowCount: 1,
-        // And we need only first three columns (start/end/what)
-        frozenColumnCount: 3,
+        // And we need only first five columns (start/end/duration/who/what)
+        frozenColumnCount: 5,
       },
     },
     data: [createHeaderRow()]
@@ -33,6 +33,8 @@ function createHeaderRow() {
       values: [
         header('Start'),
         header('End'),
+        header('Duration'),
+        header('Who?'),
         header('What?')
       ]
     }

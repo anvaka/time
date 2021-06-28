@@ -31,8 +31,7 @@ export function toDateInputStr(date) {
         '-' + pad(date.getMonth() + 1) +
         '-' + pad(date.getDate()) +
         'T' + pad(date.getHours()) +
-        ':' + pad(date.getMinutes()) +
-        ':' + pad(date.getSeconds());
+        ':' + pad(date.getMinutes());
 }
 
 function pad(number) {

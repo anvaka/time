@@ -15,9 +15,11 @@
     "flatpickr": "^2.0.5",
     "jquery": "^2.2.4",
     "materialize-css": "^0.97.7",
+    "moment": "^2.15.1",
     "ngraph.events": "0.0.4",
     "vue": "^1.0.21",
     "vue-clap": "^1.0.2",
+    "vue-moment": "^2.0.2",
     "vue-router": "^0.7.13"
   },
   "devDependencies": {
