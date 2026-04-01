@@ -29,7 +29,7 @@ since last entry (see GIF file above).
 
 # Why?
 
-I was just curios. I had this idea of `Google Sheets as a Database` for a while,
+I was just curious. I had this idea of `Google Sheets as a Database` for a while,
 and wanted to have a tool to track time that is tailored to my needs. So it was
 a good excuse to play with it, and have one more tool in my professional toolset :).
 
