@@ -25,6 +25,7 @@ module.exports = {
   },
   globals: {
     gapi: true,
+    google: true,
     '$': true
   }
 }
