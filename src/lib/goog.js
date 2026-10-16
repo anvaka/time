@@ -38,52 +38,81 @@ const SCOPES = [
 const sheetIdToTitle = new Map();
 
 let apiInitialized = false;
+let tokenClient = null;
+
+function initTokenClient(callback) {
+  if (tokenClient) {
+    if (callback) callback();
+    return;
+  }
+
+  if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+    tokenClient = window.google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES.join(' '),
+      callback: handleTokenResponse,
+    });
+    if (callback) callback();
+  } else {
+    setTimeout(() => initTokenClient(callback), 50);
+  }
+}
+
+function handleTokenResponse(tokenResponse) {
+  if (tokenResponse && tokenResponse.error) {
+    appModel.authenticated = false;
+    return;
+  }
+
+  if (tokenResponse && tokenResponse.access_token) {
+    const expiresIn = Number(tokenResponse.expires_in) || 3600;
+    tokenResponse.expires_at = Date.now() + (expiresIn * 1000);
+    localStorage.setItem('gapi_token', JSON.stringify(tokenResponse));
+    gapi.client.setToken(tokenResponse);
+    appModel.authenticated = true;
+    listTimeSheetFiles();
+  }
+}
 
 /**
  * Attempts to sign in
- * @param {bool} immediate - if true, then login uses "immediate mode", which
- * means that the token is refreshed behind the scenes, and no UI is shown to the user.
  */
-export function signIn(immediate) {
-  return gapi.auth.authorize({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    immediate
-  }, handleAuthResult);
+export function signIn() {
+  initTokenClient(() => {
+    tokenClient.requestAccessToken({ prompt: '' });
+  });
 }
 
 export function signOut(callback) {
-  const token = gapi.auth.getToken();
-  if (token) {
-    const accessToken = token.access_token;
-    const revokeUrl = `https://accounts.google.com/o/oauth2/revoke?token=${accessToken}`;
-
-    window.jQuery.ajax({
-      type: 'GET',
-      url: revokeUrl,
-      async: false,
-      contentType: 'application/json',
-      dataType: 'jsonp',
-      success: forwardCallback,
-      error: forwardCallback
-    });
-  }
-
-  gapi.auth.signOut();
-
-  // Make sure we also forward callback right now, if there was no token.
-  if (!token) setTimeout(forwardCallback, 0);
+  const token = gapi.client && gapi.client.getToken();
+  localStorage.removeItem('gapi_token');
 
   function forwardCallback() {
+    if (gapi.client) {
+      gapi.client.setToken(null);
+    }
     cleanAppModel();
-    callback();
+    if (callback) callback();
   }
+
+  const hasGis = window.google && window.google.accounts && window.google.accounts.oauth2;
+  if (token && token.access_token && hasGis) {
+    try {
+      window.google.accounts.oauth2.revoke(token.access_token, forwardCallback);
+      return;
+    } catch (e) {
+      forwardCallback();
+      return;
+    }
+  }
+
+  forwardCallback();
 }
 
 function cleanAppModel() {
   appModel.filesLoaded = false;
   appModel.files = [];
-  appModel.authenticated = undefined;
+  appModel.authenticated = false;
 }
 
 /**
@@ -124,30 +153,56 @@ export function createSpreadsheet(name) {
 }
 
 /**
- * Attempts to refresh auth token in background. If Google Client is not loaded
- * yet, this function prepares window.initializeGoogleApi variable to be called
- * by index.html
+ * Checks for a restored session from localStorage, or marks unauthenticated.
+ */
+function checkStoredSession() {
+  const savedTokenStr = localStorage.getItem('gapi_token');
+  if (savedTokenStr) {
+    try {
+      const savedToken = JSON.parse(savedTokenStr);
+      const isNotExpired = savedToken && Date.now() < (savedToken.expires_at - 60000);
+      if (savedToken && savedToken.access_token && isNotExpired) {
+        gapi.client.setToken(savedToken);
+        appModel.authenticated = true;
+        listTimeSheetFiles();
+        return;
+      }
+    } catch (e) {
+      localStorage.removeItem('gapi_token');
+    }
+  }
+
+  appModel.authenticated = false;
+}
+
+/**
+ * Initializes Google Client and Google Identity Services.
  */
 export function initializeGoogleApi() {
-  if (!gapi.auth) {
-    // This means, google client was not yet loaded. We ask index.html
-    // to call us when google client script is loaded.
+  if (typeof gapi === 'undefined' || !gapi.load) {
     window.initializeGoogleApi = initializeGoogleApi;
-
-    // And wait until client is loaded...
     return;
   }
 
-  // On the other hand, if we've already initialized the API, we just bail out
   if (apiInitialized) {
     return;
   }
 
-  // First time here - make sure no-one will ever call us again.
   apiInitialized = true;
 
-  // Attempt to sign in in background
-  signIn(/* immediate = */ true);
+  initTokenClient();
+
+  gapi.load('client', () => {
+    Promise.all([
+      gapi.client.load('https://sheets.googleapis.com/$discovery/rest?version=v4'),
+      gapi.client.load('drive', 'v3')
+    ]).then(() => {
+      appModel.sheetsAPIReady = true;
+      checkStoredSession();
+    }, () => {
+      appModel.authenticated = false;
+    });
+  });
 }
 
 /**
@@ -183,29 +238,16 @@ export function getSheetTitle(spreadsheetId, callback) {
   });
 }
 
-function handleAuthResult(authResult) {
-  appModel.authenticated = authResult && !authResult.error;
-
-  if (appModel.authenticated) loadAPIs();
-}
-
-function loadAPIs() {
-  gapi.client.load('https://sheets.googleapis.com/$discovery/rest?version=v4').then(markGapiReady);
-  gapi.client.load('drive', 'v3', listTimeSheetFiles);
-}
-
-function markGapiReady() {
-  appModel.sheetsAPIReady = true;
-}
-
 function listTimeSheetFiles() {
+  if (!gapi.client || !gapi.client.drive) return;
+
   gapi.client.drive.files.list({
     q: "mimeType='application/vnd.google-apps.spreadsheet' and trashed = false",
     pageSize: 100,
   }).execute(response => {
     appModel.filesLoaded = true;
-    appModel.files = response.files;
-    makeTitleIndex(response.files);
+    appModel.files = (response && response.files) || [];
+    makeTitleIndex(appModel.files);
   }, checkError);
 }
 
@@ -231,8 +273,13 @@ function get(obj, path) {
 function id(x) { return x; }
 
 function checkError(response) {
-  if (response.status === 401) {
-    // this is invalid auth. Refresh the page should fix it
+  if (response && response.status === 401) {
+    // this is invalid auth. Clear token and refresh page
+    localStorage.removeItem('gapi_token');
+    if (gapi.client) {
+      gapi.client.setToken(null);
+    }
+    appModel.authenticated = false;
     window.location.reload();
   }
 
